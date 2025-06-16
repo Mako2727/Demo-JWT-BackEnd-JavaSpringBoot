@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.dto.RentalListDTO;
+
 import com.example.demo.model.Rental;
 import com.example.demo.repository.RentalRepository;
 
@@ -14,10 +14,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.format.DateTimeFormatter;
+
 import com.example.demo.model.User;  
 import com.example.demo.repository.UserRepository; 
 import java.util.List;
-import com.example.demo.dto.RentalListDTO;
+import com.example.demo.dto.RentalDetailDTO;
+import com.example.demo.model.Rental;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class RentalService {
@@ -86,18 +92,35 @@ public class RentalService {
         }
     }
 
-public List<RentalListDTO> getAllRentals() {
+public List<RentalDetailDTO> getAllRentals() {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
     return rentalRepository.findAll().stream()
             .map(r -> {
-                RentalListDTO dto = new RentalListDTO();
+                RentalDetailDTO dto = new RentalDetailDTO();
                 dto.setId(r.getId());
                 dto.setName(r.getName());
                 dto.setSurface(r.getSurface());
                 dto.setPrice(r.getPrice());
                 dto.setDescription(r.getDescription());
-                dto.setPicturePath(r.getPicturePath());
+                dto.setPicture(r.getPicturePath());  // Remarque : ton DTO a un champ "picture"
+                dto.setCreated_at(r.getCreatedAt() != null ? r.getCreatedAt().format(formatter) : null);
+                dto.setUpdated_at(r.getUpdatedAt() != null ? r.getUpdatedAt().format(formatter) : null);
+                dto.setOwnerId(r.getOwner() != null ? r.getOwner().getId() : null);
                 return dto;
-            }).toList();
+            })
+            .collect(Collectors.toList());
 }
+
+public Rental getRentalById(Long id) {
+    try {
+        return rentalRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Location non trouvée avec l'id : " + id));
+    } catch (Exception e) {
+        // Tu peux ici logger l'erreur ou faire d'autres traitements si besoin
+        throw new RuntimeException("Erreur lors de la récupération de la location avec l'id : " + id, e);
+    }
+}
+
 
 }
