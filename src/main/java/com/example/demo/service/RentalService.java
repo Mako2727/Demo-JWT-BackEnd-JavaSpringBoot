@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.RentalListDTO;
 import com.example.demo.model.Rental;
 import com.example.demo.repository.RentalRepository;
 
@@ -15,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import com.example.demo.model.User;  
 import com.example.demo.repository.UserRepository; 
+import java.util.List;
+import com.example.demo.dto.RentalListDTO;
 
 @Service
 public class RentalService {
@@ -82,4 +85,19 @@ public class RentalService {
             throw new RuntimeException("Erreur lors de la sauvegarde de l'image : " + e.getMessage());
         }
     }
+
+public List<RentalListDTO> getAllRentals() {
+    return rentalRepository.findAll().stream()
+            .map(r -> {
+                RentalListDTO dto = new RentalListDTO();
+                dto.setId(r.getId());
+                dto.setName(r.getName());
+                dto.setSurface(r.getSurface());
+                dto.setPrice(r.getPrice());
+                dto.setDescription(r.getDescription());
+                dto.setPicturePath(r.getPicturePath());
+                return dto;
+            }).toList();
+}
+
 }
