@@ -2,8 +2,8 @@ package com.example.demo.dto;
 
 public class MessageDTO {
     private Integer id;
-    private Integer rentalId;
-    private Integer userId;
+    private Long rentalId;
+    private Long userId;
     private String message;
     private String createdAt; // format "yyyy/MM/dd HH:mm:ss" si besoin
     private String updatedAt;
@@ -11,11 +11,11 @@ public class MessageDTO {
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
-    public Integer getRentalId() { return rentalId; }
-    public void setRentalId(Integer rentalId) { this.rentalId = rentalId; }
+    public Long getRentalId() { return rentalId; }
+    public void setRentalId(Long rentalId) { this.rentalId = rentalId; }
 
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }

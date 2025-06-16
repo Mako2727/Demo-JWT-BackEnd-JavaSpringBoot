@@ -50,7 +50,6 @@ public class Message {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.updatedAt = this.createdAt;
     }
 
     @PreUpdate
