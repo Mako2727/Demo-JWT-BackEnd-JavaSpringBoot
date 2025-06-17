@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.dto.RentalDetailDTO;
+import com.example.demo.dto.RentalUpdateDTO;
 import com.example.demo.model.Rental;
 import com.example.demo.model.User;
 import com.example.demo.repository.RentalRepository;
@@ -123,41 +124,31 @@ public ResponseEntity<?> getRentalById(@PathVariable Long id) {
     }
 }
 
-@PutMapping("/update/{id}")
-public ResponseEntity<RentalDetailDTO> updateRental(
-       @PathVariable Long id,
-        @RequestBody RentalDetailDTO rentalDto) {
- 
-   
-          System.out.println("Erreur ResponseEntity 0 : ");
-        Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rental not found"));
+@PutMapping("/{id}")
+public ResponseEntity<Map<String, String>> updateRental(
+        @PathVariable Long id,
+        @ModelAttribute RentalUpdateDTO rentalDto) {
 
-        // Mise à jour des champs
-        rental.setName(rentalDto.getName());
-        rental.setSurface(rentalDto.getSurface());
-        rental.setPrice(rentalDto.getPrice());
-        rental.setDescription(rentalDto.getDescription());
+    Rental rental = rentalRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rental not found"));
 
-          System.out.println("Erreur ResponseEntity 1 : ");
+    // Mise à jour des champs
+    rental.setName(rentalDto.getName());
+    rental.setSurface(rentalDto.getSurface());
+    rental.setPrice(rentalDto.getPrice());
+    rental.setDescription(rentalDto.getDescription());
 
-       /*  if (rentalDto.getPicture() != null) {
-            String relativePath = rentalDto.getPicture()
-                .replace("http://localhost:8081/", "")
-                .replace("/", "\\");
-            rental.setPicturePath(relativePath);
-        }*/
-          System.out.println("Erreur ResponseEntity 2 : ");
+    if (rentalDto.getOwnerId() != null && 
+        (rental.getOwner() == null || !rental.getOwner().getId().equals(rentalDto.getOwnerId()))) {
+        
+        User newOwner = userRepository.findById(rentalDto.getOwnerId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Owner not found"));
+        rental.setOwner(newOwner);
+    }
 
-        if (rentalDto.getOwnerId() != null && !rental.getOwner().getId().equals(rentalDto.getOwnerId())) {
-            User newOwner = userRepository.findById(rentalDto.getOwnerId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Owner not found"));
-            rental.setOwner(newOwner);
-        }
-        System.out.println("Erreur ResponseEntity 3 : ");
-        Rental updatedRental = rentalRepository.save(rental);
-        return ResponseEntity.ok(convertToDTO(updatedRental));  
-    
+    rentalRepository.save(rental);
+
+    return ResponseEntity.ok(Map.of("message", "Rental updated !"));
 }
 
 private RentalDetailDTO convertToDTO(Rental rental) {
