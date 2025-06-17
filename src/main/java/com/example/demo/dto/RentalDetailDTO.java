@@ -8,6 +8,7 @@ public class RentalDetailDTO {
     private int surface;
     private double price;
     private String description;
+       private OwnerDTO owner;
 
     @JsonProperty("created_at")
     private String created_at;
