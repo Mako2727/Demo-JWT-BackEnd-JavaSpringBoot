@@ -1,28 +1,70 @@
 package com.example.demo.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class MessageDTO {
+    
     private Integer id;
+
+    @JsonProperty("rental_id")
     private Long rentalId;
+
+    @JsonProperty("user_id")
     private Long userId;
+
     private String message;
-    private String createdAt; // format "yyyy/MM/dd HH:mm:ss" si besoin
+
+    @JsonProperty("created_at")
+    private String createdAt;
+
+    @JsonProperty("updated_at")
     private String updatedAt;
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public Long getRentalId() { return rentalId; }
-    public void setRentalId(Long rentalId) { this.rentalId = rentalId; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public Long getRentalId() {
+        return rentalId;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public void setRentalId(Long rentalId) {
+        this.rentalId = rentalId;
+    }
 
-    public String getCreatedAt() { return createdAt; }
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public Long getUserId() {
+        return userId;
+    }
 
-    public String getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

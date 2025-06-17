@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.example.demo.model.User;  
@@ -76,20 +77,30 @@ public class RentalService {
         if (picture.isEmpty()) return null;
 
         try {
-            byte[] bytes = picture.getBytes();
-            String fileName = System.currentTimeMillis() + "_" + picture.getOriginalFilename();
-            Path path = Paths.get(UPLOAD_DIR + fileName);
+    byte[] bytes = picture.getBytes();
 
-            // Crée le dossier s’il n’existe pas
-            File dir = new File(UPLOAD_DIR);
-            if (!dir.exists()) dir.mkdirs();
+    // Récupère la date actuelle
+    LocalDate now = LocalDate.now();
+    String year = String.valueOf(now.getYear());
+    String month = String.format("%02d", now.getMonthValue());
 
-            Files.write(path, bytes);
+    // Nouveau dossier avec année et mois
+    String dirPath = UPLOAD_DIR + year + "/" + month + "/";
 
-            return path.toString().replace("\\", "/");
-        } catch (IOException e) {
-            throw new RuntimeException("Erreur lors de la sauvegarde de l'image : " + e.getMessage());
-        }
+    // Crée le dossier s’il n’existe pas
+    File dir = new File(dirPath);
+    if (!dir.exists()) dir.mkdirs();
+
+    String fileName = System.currentTimeMillis() + "_" + picture.getOriginalFilename();
+    Path path = Paths.get(dirPath + fileName);
+
+    Files.write(path, bytes);
+
+    // Retourne chemin avec slash normalisés
+    return path.toString().replace("\\", "/");
+} catch (IOException e) {
+    throw new RuntimeException("Erreur lors de la sauvegarde de l'image : " + e.getMessage());
+}
     }
 
 public List<RentalDetailDTO> getAllRentals() {

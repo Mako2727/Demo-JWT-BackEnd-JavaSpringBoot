@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.dto.RentalDetailDTO;
 import com.example.demo.model.Rental;
@@ -74,13 +75,26 @@ public class RentalController {
 
 @GetMapping
 public ResponseEntity<Map<String, List<RentalDetailDTO>>> getAllRentals() {
-    List<RentalDetailDTO> rentals = rentalService.getAllRentals();
+     List<RentalDetailDTO> rentals = rentalService.getAllRentals();
+
+    // Récupère dynamiquement l'URL de base, par ex. http://localhost:3001
+    String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+
+    // Ajoute dynamiquement le préfixe baseUrl aux URLs des images
+    rentals.forEach(r -> {
+        if (r.getPicture() != null && !r.getPicture().isEmpty()) {
+            r.setPicture(baseUrl + "/" + r.getPicture());
+        }
+    });
+
     return ResponseEntity.ok(Map.of("rentals", rentals));
 }
 
 @GetMapping("/{id}")
 public ResponseEntity<?> getRentalById(@PathVariable Long id) {
     try {
+
+         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         Rental rental = rentalService.getRentalById(id);
 
         RentalDetailDTO dto = new RentalDetailDTO();
@@ -89,7 +103,7 @@ public ResponseEntity<?> getRentalById(@PathVariable Long id) {
         dto.setSurface(rental.getSurface());
         dto.setPrice(rental.getPrice());
         dto.setDescription(rental.getDescription());
-        dto.setPicture(rental.getPicturePath());
+        dto.setPicture(baseUrl + "/" + rental.getPicturePath());
 
         // ownerId
         dto.setOwnerId(rental.getOwner().getId());
