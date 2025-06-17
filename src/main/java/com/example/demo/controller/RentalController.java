@@ -73,9 +73,9 @@ public class RentalController {
     }
 
 @GetMapping
-public ResponseEntity<List<RentalDetailDTO>> getAllRentals() {
+public ResponseEntity<Map<String, List<RentalDetailDTO>>> getAllRentals() {
     List<RentalDetailDTO> rentals = rentalService.getAllRentals();
-    return ResponseEntity.ok(rentals);
+    return ResponseEntity.ok(Map.of("rentals", rentals));
 }
 
 @GetMapping("/{id}")

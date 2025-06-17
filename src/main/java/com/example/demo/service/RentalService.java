@@ -86,7 +86,7 @@ public class RentalService {
 
             Files.write(path, bytes);
 
-            return path.toString();
+            return path.toString().replace("\\", "/");
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de la sauvegarde de l'image : " + e.getMessage());
         }

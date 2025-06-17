@@ -45,7 +45,7 @@ public jwtRequestFilter(JwtUtil jwtUtil) {
         String path = request.getServletPath();
 
         
-        if (path.equals("/auth/login")) {
+        if (path.equals("/api/auth/login")) {
             filterChain.doFilter(request, response);
             return;
         }

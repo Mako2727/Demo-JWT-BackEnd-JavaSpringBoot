@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,11 +21,12 @@ import com.example.demo.model.AuthRequest;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.security.core.AuthenticationException;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -60,7 +63,7 @@ public class AuthController {
             String jwt = jwtUtil.generateToken(user);
             System.out.println("JWT généré : " + jwt);
             // Retourne le token dans la réponse JSON
-            return ResponseEntity.ok(Map.of("jwt", jwt));
+            return ResponseEntity.ok(Map.of("token", jwt));
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Identifiants invalides"+ex.getMessage()));
@@ -78,30 +81,67 @@ public ResponseEntity<?> register(@RequestBody AuthRequest request) {
     user.setName(request.getName());
     user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-    userRepository.save(user);
 
-    return ResponseEntity.ok("Utilisateur enregistré avec succès !");
+try{
+     userRepository.save(user);
+   } catch (DataIntegrityViolationException dive) {
+        System.out.println("Erreur DataIntegrityViolationException : " + dive.getMostSpecificCause().getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body("Erreur d'intégrité des données : " + dive.getMostSpecificCause().getMessage());
+    } catch (ConstraintViolationException cve) {
+        System.out.println("Erreur ConstraintViolationException : " + cve.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body("Erreur de contrainte : " + cve.getMessage());
+    } catch (Exception ex) {
+        System.out.println("Erreur Exception générale : " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                             .body("Erreur interne : " + ex.getMessage());
+    }
+   
+
+       String token = jwtUtil.generateToken(user);
+
+    // Retourner le token dans un objet JSON avec la clé "token"
+    Map<String, String> response = new HashMap<>();
+    response.put("token", token);
+
+    return ResponseEntity.ok(response);
 }
 
  @GetMapping("/me")
 public ResponseEntity<?> getCurrentUser(Authentication authentication) {
-      CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+      try {
+    CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-    String email = customUserDetails.getEmail();
-    System.out.println("mon email :" + email);
+   String email = customUserDetails.getEmail();
+        System.out.println("Email extrait du token : '" + email + "'");
+        System.out.println("Longueur email : " + email.length());
 
-    User user = userRepository.findByEmail(email)
-                  .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
+        if (email == null || email.isEmpty()) {
+            System.out.println("Email est null ou vide");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email non fourni");
+        }
+
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            System.out.println("Aucun utilisateur trouvé avec cet email : " + email);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé");
+        }
 
     return ResponseEntity.ok(Map.of(
         "id", user.getId(),
         "email", user.getEmail(),
         "name", user.getName(),
         "created_at",user.getCreatedAt(),
-        "updated_at",user.getUpdatedAt()
-
-
+        "updated_at", user.getUpdatedAt() != null ? user.getUpdatedAt() : ""
     ));
+      } catch (UsernameNotFoundException e) {
+        System.out.println("Erreur : " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+    } catch (Exception e) {
+        System.out.println("Erreur inattendue : " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Erreur serveur"));
+    }
 }
     }
 
