@@ -40,39 +40,41 @@ public class RentalController {
          this.rentalRepository = rentalRepository;
     }
     
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> createRental(
-            @RequestParam("name") String name,
-            @RequestParam("surface") String surface,
-            @RequestParam("price") String price,
-            @RequestParam("description") String description,
-            @RequestParam("picture") MultipartFile picture
-    ) 
-    {
-        try {
-                // 🔒 Récupère l'utilisateur authentifié
-                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                String username;
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<Map<String, String>> createRental(
+        @RequestParam("name") String name,
+        @RequestParam("surface") String surface,
+        @RequestParam("price") String price,
+        @RequestParam("description") String description,
+        @RequestParam("picture") MultipartFile picture
+) {
+    try {
+        // 🔒 Récupère l'utilisateur authentifié
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
 
-                if (principal instanceof UserDetails) {
-                    username = ((UserDetails) principal).getUsername();
-                } else {
-                    username = principal.toString();
-                }
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
 
-                // 🔍 Récupère l'utilisateur en base à partir du username
-                User user = userRepository.findByName(username)
-                        .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        // 🔍 Récupère l'utilisateur en base à partir du username
+        User user = userRepository.findByName(username)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-                rentalService.createRental(name, surface, price, description, picture, user.getId());
-                return ResponseEntity.status(HttpStatus.CREATED).body("Location créée avec succès");
+        rentalService.createRental(name, surface, price, description, picture, user.getId());
 
-            } catch (Exception e) {
+        // ✅ JSON avec "message"
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Rental created !"));
+
+    } catch (Exception e) {
         e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                             .body("Erreur lors de la création de la location : " + e.getMessage());
-    } 
+                .body(Map.of("message", "Erreur lors de la création de la location : " + e.getMessage()));
     }
+}
 
 @GetMapping
 public ResponseEntity<Map<String, List<RentalDetailDTO>>> getAllRentals() {
