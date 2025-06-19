@@ -42,7 +42,7 @@ public class SecurityConfig {
 
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/uploads/**").permitAll()
+                .requestMatchers("/api/auth/**", "/uploads/**","/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
