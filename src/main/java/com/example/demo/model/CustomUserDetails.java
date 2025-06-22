@@ -1,8 +1,8 @@
-package com.example.demo.security;
+package com.example.demo.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.example.demo.model.User;
+
 import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
@@ -19,7 +19,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null; // ou retourne les rôles si tu en as
+        return null; 
     }
 
     @Override
@@ -27,14 +27,14 @@ public class CustomUserDetails implements UserDetails {
         return user.getPassword();
     }
 
-      // Ajoute si besoin
+    
     public String getEmail() {
         return user.getEmail();
     }
 
     @Override
     public String getUsername() {
-        return user.getName();  // ou getEmail() selon ce que tu utilises
+        return user.getName();  
     }
 
     @Override

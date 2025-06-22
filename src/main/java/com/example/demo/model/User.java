@@ -48,12 +48,9 @@ public class User implements UserDetails {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-
-    // UserDetails interface methods
-
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Exemple simple : un utilisateur avec le rôle "USER"
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
@@ -70,25 +67,25 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;  // à personnaliser selon ton besoin
+        return true; 
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;  // à personnaliser selon ton besoin
+        return true;  
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;  // à personnaliser selon ton besoin
+        return true; 
     }
 
     @Override
     public boolean isEnabled() {
-        return true;  // à personnaliser selon ton besoin
+        return true; 
     }
 
-    // Getters et setters classiques pour les autres champs
+    
 
     public Long getId() {
         return id;

@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RentalRepository extends JpaRepository<Rental, Long> {
-    // Exemple de méthode personnalisée si besoin :
-    // List<Rental> findByOwnerId(Long ownerId);
+   
 }

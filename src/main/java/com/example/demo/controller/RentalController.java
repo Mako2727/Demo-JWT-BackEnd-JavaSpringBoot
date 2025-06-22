@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,7 +48,7 @@ public ResponseEntity<Map<String, String>> createRental(
         @RequestParam("picture") MultipartFile picture
 ) {
     try {
-        // 🔒 Récupère l'utilisateur authentifié
+        // Récupère l'utilisateur authentifié
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
 
@@ -59,13 +58,13 @@ public ResponseEntity<Map<String, String>> createRental(
             username = principal.toString();
         }
 
-        // 🔍 Récupère l'utilisateur en base à partir du username
+        // Récupère l'utilisateur en base à partir du username
         User user = userRepository.findByName(username)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         rentalService.createRental(name, surface, price, description, picture, user.getId());
 
-        // ✅ JSON avec "message"
+        // JSON avec "message"
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Rental created !"));
 
@@ -80,10 +79,10 @@ public ResponseEntity<Map<String, String>> createRental(
 public ResponseEntity<Map<String, List<RentalDetailDTO>>> getAllRentals() {
      List<RentalDetailDTO> rentals = rentalService.getAllRentals();
 
-    // Récupère dynamiquement l'URL de base, par ex. http://localhost:3001
+    
     String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
-    // Ajoute dynamiquement le préfixe baseUrl aux URLs des images
+  
     rentals.forEach(r -> {
         if (r.getPicture() != null && !r.getPicture().isEmpty()) {
             r.setPicture(baseUrl + "/" + r.getPicture());

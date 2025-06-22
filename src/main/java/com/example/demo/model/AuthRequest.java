@@ -6,7 +6,6 @@ public class AuthRequest {
     private String email;
     
 
-    // Constructeur vide nécessaire pour la désérialisation JSON
     public AuthRequest() {}
 
     // Constructeur avec paramètres (optionnel)

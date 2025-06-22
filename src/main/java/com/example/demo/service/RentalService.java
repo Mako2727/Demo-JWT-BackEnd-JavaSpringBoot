@@ -21,10 +21,7 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository; 
 import java.util.List;
 import com.example.demo.dto.RentalDetailDTO;
-import com.example.demo.model.Rental;
-import java.util.List;
 import java.util.stream.Collectors;
-import java.time.format.DateTimeFormatter;
 
 @Service
 public class RentalService {
@@ -114,7 +111,7 @@ public List<RentalDetailDTO> getAllRentals() {
                 dto.setSurface(r.getSurface());
                 dto.setPrice(r.getPrice());
                 dto.setDescription(r.getDescription());
-                dto.setPicture(r.getPicturePath());  // Remarque : ton DTO a un champ "picture"
+                dto.setPicture(r.getPicturePath());  
                 dto.setCreated_at(r.getCreatedAt() != null ? r.getCreatedAt().format(formatter) : null);
                 dto.setUpdated_at(r.getUpdatedAt() != null ? r.getUpdatedAt().format(formatter) : null);
                 dto.setOwnerId(r.getOwner() != null ? r.getOwner().getId() : null);
@@ -127,8 +124,7 @@ public Rental getRentalById(Long id) {
     try {
         return rentalRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Location non trouvée avec l'id : " + id));
-    } catch (Exception e) {
-        // Tu peux ici logger l'erreur ou faire d'autres traitements si besoin
+    } catch (Exception e) {        
         throw new RuntimeException("Erreur lors de la récupération de la location avec l'id : " + id, e);
     }
 }

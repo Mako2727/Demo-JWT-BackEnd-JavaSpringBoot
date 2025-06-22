@@ -1,9 +1,9 @@
-package com.example.demo.repository;
+package com.example.demo.SpringSecurity;
 
-import com.example.demo.security.JwtUtil;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

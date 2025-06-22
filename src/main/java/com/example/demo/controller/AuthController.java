@@ -11,13 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.security.CustomUserDetails;
-import com.example.demo.security.JwtUtil;
-
-
 import org.springframework.security.core.Authentication;
+
+import com.example.demo.SpringSecurity.JwtUtil;
 import com.example.demo.model.AuthRequest;
+import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 
@@ -41,7 +39,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
      @Autowired
-    private JwtUtil jwtUtil;  // ta classe utilitaire pour créer/valider le JWT
+    private JwtUtil jwtUtil;  
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
