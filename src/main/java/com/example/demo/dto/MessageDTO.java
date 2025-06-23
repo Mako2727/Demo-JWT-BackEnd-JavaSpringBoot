@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 
 public class MessageDTO {
     
@@ -12,6 +13,7 @@ public class MessageDTO {
     @JsonProperty("user_id")
     private Long userId;
 
+    @NotBlank(message = "Le message ne peut pas être vide")
     private String message;
 
     @JsonProperty("created_at")
@@ -20,6 +22,7 @@ public class MessageDTO {
     @JsonProperty("updated_at")
     private String updatedAt;
 
+    // getters et setters inchangés
     public Integer getId() {
         return id;
     }

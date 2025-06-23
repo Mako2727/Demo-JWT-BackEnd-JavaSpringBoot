@@ -2,13 +2,18 @@ package com.example.demo.service;
 
 
 import com.example.demo.SpringSecurity.JwtUtil;
+import com.example.demo.model.AuthRequest;
 import com.example.demo.model.CustomUserDetails;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,17 +25,40 @@ public class AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private UserRepository userRepository;
 
-    public String login(String user, String password) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public String login(String email, String password) {
         try {
             Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user, password)
+                new UsernamePasswordAuthenticationToken(email, password)
             );
-
             CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
             return jwtUtil.generateToken(userDetails.getUser());
         } catch (AuthenticationException e) {
             throw new RuntimeException("Identifiants invalides");
         }
+    }
+
+    public String register(AuthRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email déjà utilisé");
+        }
+
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
+
+        return jwtUtil.generateToken(user);
+    }
+
+    public User getCurrentUser(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
     }
 }

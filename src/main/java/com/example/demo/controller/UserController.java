@@ -1,41 +1,39 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.UserDTO;
 import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeFormatter;
-import com.example.demo.dto.UserDTO;
 
 @RestController
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "*")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.getUserById(id);
 
-        // Préparer une réponse simplifiée (DTO) avec uniquement les champs nécessaires
         var dto = new UserDTO(
             user.getId(),
             user.getName(),
             user.getEmail(),
-            user.getCreatedAt() != null ? user.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) : null,
-            user.getUpdatedAt() != null ? user.getUpdatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) : null
+            user.getCreatedAt() != null ? user.getCreatedAt().format(formatter) : null,
+            user.getUpdatedAt() != null ? user.getUpdatedAt().format(formatter) : null
         );
 
         return ResponseEntity.ok(dto);
     }
 
-    
 }
