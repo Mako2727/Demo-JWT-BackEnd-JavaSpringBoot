@@ -53,7 +53,7 @@ Authorization: Bearer <votre_token_jwt>
 
 **Forker le projet** depuis le dépôt GitHub.
 
-**Cloner le projet** en local avec Git Desktop ou via la ligne de commande.
+**Cloner le projet** en local avec Git Desktop.
 
 **Ouvrir le projet** avec Visual Studio Code.
 
