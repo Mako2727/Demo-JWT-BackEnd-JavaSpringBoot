@@ -3,12 +3,18 @@ package com.example.demo.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RentalDetailDTO {
-     private Long id;
+
+    private Long id;
+
     private String name;
+
     private int surface;
+
     private double price;
+
     private String description;
-       private OwnerDTO owner;
+
+    private OwnerDTO owner;
 
     @JsonProperty("created_at")
     private String created_at;
@@ -39,8 +45,11 @@ public class RentalDetailDTO {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
+    public OwnerDTO getOwner() { return owner; }
+    public void setOwner(OwnerDTO owner) { this.owner = owner; }
+
     public String getCreated_at() { return created_at; }
-    public void setCreated_at(String createdAt) { this.created_at = createdAt; }
+    public void setCreated_at(String created_at) { this.created_at = created_at; }
 
     public String getUpdate_at() { return updatedAt; }
     public void setUpdated_at(String updatedAt) { this.updatedAt = updatedAt; }

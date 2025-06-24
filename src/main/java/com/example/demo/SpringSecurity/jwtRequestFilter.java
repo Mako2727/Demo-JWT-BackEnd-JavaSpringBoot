@@ -45,6 +45,12 @@ public jwtRequestFilter(JwtUtil jwtUtil) {
         String path = request.getServletPath();
 
         
+        /* if (path.equals("/api/auth/login")
+            || path.startsWith("/swagger-ui")
+            || path.startsWith("/v3/api-docs")) {
+            filterChain.doFilter(request, response);
+            return;
+            }*/
         if (path.equals("/api/auth/login")) {
             filterChain.doFilter(request, response);
             return;

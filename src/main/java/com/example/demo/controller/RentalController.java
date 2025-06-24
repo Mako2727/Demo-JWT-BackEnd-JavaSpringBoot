@@ -7,20 +7,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.example.demo.dto.RentalDetailDTO;
+import com.example.demo.dto.RentalRequestDTO;
 import com.example.demo.dto.RentalUpdateDTO;
 import com.example.demo.model.Rental;
 import com.example.demo.model.User;
-import com.example.demo.repository.RentalRepository;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.RentalService;
-
+import jakarta.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/rentals")
@@ -28,49 +26,39 @@ import java.util.Map;
 public class RentalController {
 
     private final RentalService rentalService;
-    private final UserRepository userRepository;
-    private final RentalRepository rentalRepository;
 
-    public RentalController(RentalService rentalService, UserRepository userRepository, RentalRepository rentalRepository) {
-        this.rentalService = rentalService;
-        this.userRepository = userRepository;
-        this.rentalRepository = rentalRepository;
-    }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, String>> createRental(
-            @RequestParam("name") String name,
-            @RequestParam("surface") String surface,
-            @RequestParam("price") String price,
-            @RequestParam("description") String description,
-            @RequestParam("picture") MultipartFile picture
-    ) {
-        try {
-            // Récupère l'utilisateur authentifié
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String username;
 
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-            } else {
-                username = principal.toString();
-            }
+public RentalController(RentalService rentalService) {
+    this.rentalService = rentalService;
+}
 
-            // Récupère l'utilisateur en base à partir du username
-            User user = userRepository.findByName(username)
-                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+   @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<Map<String, String>> createRental(
+        @Valid @ModelAttribute RentalRequestDTO rentalDto,
+        @RequestParam("picture") MultipartFile picture) {    
+   
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = principal instanceof UserDetails
+                ? ((UserDetails) principal).getUsername()
+                : principal.toString();
 
-            rentalService.createRental(name, surface, price, description, picture, user.getId());
+        User user = rentalService.getUserByUsername(username);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("message", "Rental created !"));
+        rentalService.createRental(
+            rentalDto.getName(),
+            rentalDto.getSurface(),
+            rentalDto.getPrice(),
+            rentalDto.getDescription(),
+            picture,
+            user.getId()
+        );
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Erreur lors de la création de la location : " + e.getMessage()));
-        }
-    }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Rental created !"));
+
+   
+}
 
     @GetMapping
     public ResponseEntity<Map<String, List<RentalDetailDTO>>> getAllRentals() {
@@ -88,8 +76,8 @@ public class RentalController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getRentalById(@PathVariable Long id) {
-        try {
+    public ResponseEntity<RentalDetailDTO> getRentalById(@PathVariable Long id) {
+    
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
             Rental rental = rentalService.getRentalById(id);
 
@@ -111,34 +99,16 @@ public class RentalController {
             }
 
             return ResponseEntity.ok(dto);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+       
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Map<String, String>> updateRental(
-            @PathVariable Long id,
-            @ModelAttribute RentalUpdateDTO rentalDto) {
+   @PutMapping("/{id}")
+public ResponseEntity<Map<String, String>> updateRental(
+        @PathVariable Long id,
+        @ModelAttribute RentalUpdateDTO rentalDto) {
 
-        Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rental not found"));
+        rentalService.updateRental(id, rentalDto);
+        return ResponseEntity.ok(Map.of("message", "Rental updated !"));    
+}
 
-        rental.setName(rentalDto.getName());
-        rental.setSurface(rentalDto.getSurface());
-        rental.setPrice(rentalDto.getPrice());
-        rental.setDescription(rentalDto.getDescription());
-
-        if (rentalDto.getOwnerId() != null &&
-                (rental.getOwner() == null || !rental.getOwner().getId().equals(rentalDto.getOwnerId()))) {
-
-            User newOwner = userRepository.findById(rentalDto.getOwnerId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Owner not found"));
-            rental.setOwner(newOwner);
-        }
-
-        rentalRepository.save(rental);
-
-        return ResponseEntity.ok(Map.of("message", "Rental updated !"));
-    }
 }

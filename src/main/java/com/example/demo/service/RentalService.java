@@ -24,6 +24,7 @@ public class RentalService {
 
     private final RentalRepository rentalRepository;
     private final UserRepository userRepository;
+    
 
     private static final String UPLOAD_DIR = "uploads/";
 
@@ -60,10 +61,15 @@ public class RentalService {
     }
 
     public void createRental(String name, String surface, String price, String description, MultipartFile picture, Long ownerId) {
-        try {
-            int surfaceInt = Integer.parseInt(surface);
-            double priceDouble = Double.parseDouble(price);
+         int surfaceInt;
+    double priceDouble;
 
+    try {
+        surfaceInt = Integer.parseInt(surface);
+        priceDouble = Double.parseDouble(price);
+    } catch (NumberFormatException e) {
+        throw new IllegalArgumentException("Surface ou price invalide", e);
+    }
             String picturePath = savePicture(picture);
 
             User owner = userRepository.findById(ownerId)
@@ -79,11 +85,7 @@ public class RentalService {
 
             rentalRepository.save(rental);
 
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("Erreur de conversion : surface ou price invalide", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la création de la location", e);
-        }
+        
     }
 
     private String savePicture(MultipartFile picture) {
