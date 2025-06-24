@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import com.example.demo.model.User;
 import com.example.demo.service.RentalService;
 import jakarta.validation.Valid;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +107,16 @@ public ResponseEntity<Map<String, String>> createRental(
    @PutMapping("/{id}")
 public ResponseEntity<Map<String, String>> updateRental(
         @PathVariable Long id,
-        @ModelAttribute RentalUpdateDTO rentalDto) {
+        @Valid @ModelAttribute RentalUpdateDTO rentalDto,
+        BindingResult bindingResult) {
+
+            if (bindingResult.hasErrors()) {
+        Map<String, String> errors = new HashMap<>();
+        bindingResult.getFieldErrors().forEach(error -> {
+            errors.put(error.getField(), error.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
+    }
 
         rentalService.updateRental(id, rentalDto);
         return ResponseEntity.ok(Map.of("message", "Rental updated !"));    
