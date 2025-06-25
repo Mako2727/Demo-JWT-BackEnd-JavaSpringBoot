@@ -36,8 +36,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, jwtRequestFilter jwtRequestFilter) throws Exception {
-        System.out.println("je passe par là!!!!");
-        log.warn(">>> Mon filterChain() est exécuté !!!");
+       
 
         http
             .authorizeHttpRequests(auth -> auth

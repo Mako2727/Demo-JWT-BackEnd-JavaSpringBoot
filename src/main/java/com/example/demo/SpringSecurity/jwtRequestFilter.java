@@ -44,13 +44,7 @@ public jwtRequestFilter(JwtUtil jwtUtil) {
 
         String path = request.getServletPath();
 
-        
-        /* if (path.equals("/api/auth/login")
-            || path.startsWith("/swagger-ui")
-            || path.startsWith("/v3/api-docs")) {
-            filterChain.doFilter(request, response);
-            return;
-            }*/
+
         if (path.equals("/api/auth/login")) {
             filterChain.doFilter(request, response);
             return;
@@ -61,19 +55,16 @@ public jwtRequestFilter(JwtUtil jwtUtil) {
         String jwt = null;
         String username = null;
 
-        System.out.println("Liste des headers reçus :");
+        
         request.getHeaderNames().asIterator()
        .forEachRemaining(name -> System.out.println(name + " : " + request.getHeader(name)));
 
-          System.out.println("avant controle token : ");
-          System.out.println("mon authHeader :"+authHeader);
+          
         if (authHeader != null ) {
               
             jwt = authHeader;
-            jwt=jwt.replace("Bearer ","");
-             System.out.println("Token reçu : '" + jwt + "'");
+            jwt=jwt.replace("Bearer ","");            
             username = jwtUtil.extractUsername(jwt);
-              System.out.println("mon username : "+username);
         }
 
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -85,10 +76,9 @@ public jwtRequestFilter(JwtUtil jwtUtil) {
     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
     SecurityContextHolder.getContext().setAuthentication(authToken);
-    System.out.println(" Authentifié avec succès : " + username);
+   
 }
- System.out.println("request... : " + request);
-        System.out.println("response...: " + response);
+
         filterChain.doFilter(request, response);
        
     }

@@ -6,7 +6,6 @@ import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.User;
 import com.example.demo.service.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +16,12 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+   
+     private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequest authRequest) {      
