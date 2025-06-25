@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class MessageController {
 
-    private final MessageService messageService;
+  private final MessageService messageService;
 
-    public MessageController(MessageService messageService) {
-        this.messageService = messageService;
-    }
+  public MessageController(MessageService messageService) {
+    this.messageService = messageService;
+  }
 
-    @PostMapping
-    public ResponseEntity<MessageDTO> createMessage(@Valid @RequestBody MessageDTO messageDTO) {
-        MessageDTO created = messageService.createMessage(messageDTO);
-        return ResponseEntity.status(201).body(created);
-    }
+  @PostMapping
+  public ResponseEntity<MessageDTO> createMessage(@Valid @RequestBody MessageDTO messageDTO) {
+    MessageDTO created = messageService.createMessage(messageDTO);
+    return ResponseEntity.status(201).body(created);
+  }
 }

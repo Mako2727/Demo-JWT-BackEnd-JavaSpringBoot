@@ -1,43 +1,41 @@
 package com.example.demo.model;
 
 public class AuthRequest {
-    private String name;
-    private String password;
-    private String email;
-    
+  private String name;
+  private String password;
+  private String email;
 
-    public AuthRequest() {}
+  public AuthRequest() {}
 
-    // Constructeur avec paramètres (optionnel)
-    public AuthRequest(String name, String password, String email) {
-        this.name = name;
-        this.password = password;
-        this.email = email;
-    }
+  // Constructeur avec paramètres (optionnel)
+  public AuthRequest(String name, String password, String email) {
+    this.name = name;
+    this.password = password;
+    this.email = email;
+  }
 
+  public String getEmail() {
+    return email;
+  }
 
-       public String getEmail() {
-        return email;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-     public void setEmail(String email) {
-        this.email = email;
-    }
+  // Getters et setters
+  public String getName() {
+    return name;
+  }
 
-    // Getters et setters
-    public String getName() {
-        return name;
-    }
+  public void setName(String username) {
+    this.name = username;
+  }
 
-    public void setName(String username) {
-        this.name = username;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 }

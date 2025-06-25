@@ -4,70 +4,70 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 
 public class MessageDTO {
-    
-    private Integer id;
 
-    @JsonProperty("rental_id")
-    private Long rentalId;
+  private Integer id;
 
-    @JsonProperty("user_id")
-    private Long userId;
+  @JsonProperty("rental_id")
+  private Long rentalId;
 
-    @NotBlank(message = "Le message ne peut pas être vide")
-    private String message;
+  @JsonProperty("user_id")
+  private Long userId;
 
-    @JsonProperty("created_at")
-    private String createdAt;
+  @NotBlank(message = "Le message ne peut pas être vide")
+  private String message;
 
-    @JsonProperty("updated_at")
-    private String updatedAt;
+  @JsonProperty("created_at")
+  private String createdAt;
 
-    // getters et setters inchangés
-    public Integer getId() {
-        return id;
-    }
+  @JsonProperty("updated_at")
+  private String updatedAt;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  // getters et setters inchangés
+  public Integer getId() {
+    return id;
+  }
 
-    public Long getRentalId() {
-        return rentalId;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public void setRentalId(Long rentalId) {
-        this.rentalId = rentalId;
-    }
+  public Long getRentalId() {
+    return rentalId;
+  }
 
-    public Long getUserId() {
-        return userId;
-    }
+  public void setRentalId(Long rentalId) {
+    this.rentalId = rentalId;
+  }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+  public Long getUserId() {
+    return userId;
+  }
 
-    public String getMessage() {
-        return message;
-    }
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+  public String getMessage() {
+    return message;
+  }
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
+  public void setMessage(String message) {
+    this.message = message;
+  }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
+  public String getCreatedAt() {
+    return createdAt;
+  }
 
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public String getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 }
