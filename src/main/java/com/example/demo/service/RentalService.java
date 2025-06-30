@@ -1,11 +1,16 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.RentalDetailDTO;
+import com.example.demo.dto.RentalRequestDTO;
 import com.example.demo.dto.RentalUpdateDTO;
+import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.Rental;
 import com.example.demo.model.User;
 import com.example.demo.repository.RentalRepository;
 import com.example.demo.repository.UserRepository;
+
+
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,8 +20,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 public class RentalService {
@@ -36,6 +44,33 @@ public class RentalService {
         .findByName(username)
         .orElseThrow(
             () -> new RuntimeException("Utilisateur non trouvé avec le nom : " + username));
+  }
+
+  public RentalDetailDTO  getRentalDtoById(Long id) {
+  Rental rental = rentalRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Location non trouvée avec l'id : " + id));
+
+    RentalDetailDTO dto = new RentalDetailDTO();
+    dto.setId(rental.getId());
+    dto.setName(rental.getName());
+    dto.setSurface(rental.getSurface());
+    dto.setPrice(rental.getPrice());
+    dto.setDescription(rental.getDescription());
+
+    String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    dto.setPicture(rental.getPicturePath() != null ? baseUrl + "/" + rental.getPicturePath() : null);
+
+    dto.setOwnerId(rental.getOwner() != null ? rental.getOwner().getId() : null);
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+    if (rental.getCreatedAt() != null) {
+        dto.setCreated_at(rental.getCreatedAt().format(formatter));
+    }
+    if (rental.getUpdatedAt() != null) {
+        dto.setUpdated_at(rental.getUpdatedAt().format(formatter));
+    }
+
+    return dto;
   }
 
   public Rental getRentalById(Long id) {
@@ -68,35 +103,29 @@ public class RentalService {
     return rentalRepository.save(rental);
   }
 
-  public void createRental(
-      String name,
-      String surface,
-      String price,
-      String description,
-      MultipartFile picture,
-      Long ownerId) {
+  public void createRental(RentalRequestDTO dto) {
     int surfaceInt;
     double priceDouble;
+ 
 
-    try {
-      surfaceInt = Integer.parseInt(surface);
-      priceDouble = Double.parseDouble(price);
-    } catch (NumberFormatException e) {
-      throw new IllegalArgumentException("Surface ou price invalide", e);
-    }
-    String picturePath = savePicture(picture);
+        String email;
+       Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+      
+        email = ((CustomUserDetails) principal).getEmail();
+       User owner = userRepository.findByEmail(email).get();
 
-    User owner =
-        userRepository
-            .findById(ownerId)
-            .orElseThrow(
-                () -> new RuntimeException("Utilisateur introuvable avec l'ID : " + ownerId));
+      surfaceInt =dto.getSurface();
+      priceDouble =dto.getPrice();
+   System.out.print("surfaceInt : " +surfaceInt);
+    String picturePath = savePicture(dto.getPicture());
+
+   
 
     Rental rental = new Rental();
-    rental.setName(name);
+    rental.setName(dto.getName());
     rental.setSurface(surfaceInt);
     rental.setPrice(priceDouble);
-    rental.setDescription(description);
+    rental.setDescription(dto.getDescription());
     rental.setPicturePath(picturePath);
     rental.setOwner(owner);
 
@@ -130,7 +159,7 @@ public class RentalService {
 
   public List<RentalDetailDTO> getAllRentals() {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-
+String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
     return rentalRepository.findAll().stream()
         .map(
             r -> {
@@ -141,11 +170,16 @@ public class RentalService {
               dto.setPrice(r.getPrice());
               dto.setDescription(r.getDescription());
               dto.setPicture(r.getPicturePath());
-              dto.setCreated_at(
-                  r.getCreatedAt() != null ? r.getCreatedAt().format(formatter) : null);
-              dto.setUpdated_at(
-                  r.getUpdatedAt() != null ? r.getUpdatedAt().format(formatter) : null);
+              dto.setCreated_at(r.getCreatedAt() != null ? r.getCreatedAt().format(formatter) : null);
+              dto.setUpdated_at(r.getUpdatedAt() != null ? r.getUpdatedAt().format(formatter) : null);
               dto.setOwnerId(r.getOwner() != null ? r.getOwner().getId() : null);
+
+
+               if (dto.getPicture() != null && !dto.getPicture().isEmpty()) {
+            dto.setPicture(baseUrl + "/" + dto.getPicture());
+        }
+
+
               return dto;
             })
         .collect(Collectors.toList());

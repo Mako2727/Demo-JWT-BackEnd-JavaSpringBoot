@@ -1,55 +1,33 @@
 package com.example.demo.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.Getter;
+import lombok.Setter;
+@Getter
+@Setter
 public class RentalRequestDTO {
 
   @NotBlank(message = "Le nom est requis")
   private String name;
 
-  @NotBlank(message = "La surface est requise")
-  @Pattern(regexp = "\\d+", message = "La surface doit être un entier")
-  private String surface;
+  @NotNull(message = "La surface est requise")
+  @Min(value = 1, message = "La surface doit être supérieure à 0")
+  private int   surface;
 
-  @NotBlank(message = "Le prix est requis")
-  @Pattern(regexp = "\\d+(\\.\\d{1,2})?", message = "Le prix doit être un nombre valide")
-  private String price;
+ @NotNull(message = "Le prix est requis")
+  @Min(value = 0, message = "Le prix doit être positif ou nul")
+  private double  price;
 
   @NotBlank(message = "La description est requise")
   private String description;
 
-  // Getters et setters obligatoires pour @ModelAttribute
+  private MultipartFile picture ;
 
-  public String getName() {
-    return name;
-  }
+  
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getSurface() {
-    return surface;
-  }
-
-  public void setSurface(String surface) {
-    this.surface = surface;
-  }
-
-  public String getPrice() {
-    return price;
-  }
-
-  public void setPrice(String price) {
-    this.price = price;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
 }

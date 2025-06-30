@@ -2,15 +2,17 @@ package com.example.demo.service;
 
 import com.example.demo.SpringSecurity.JwtUtil;
 import com.example.demo.dto.RegisterDTO;
+import com.example.demo.dto.UserMeDTO;
 import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,17 +29,13 @@ public class AuthService {
   @Autowired private PasswordEncoder passwordEncoder;
 
   public String login(String email, String password) {
-    try {
+   
       Authentication auth =
           authenticationManager.authenticate(
               new UsernamePasswordAuthenticationToken(email, password));
       CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
       return jwtUtil.generateToken(userDetails.getUser());
-    } catch (BadCredentialsException e) {
-      throw new BadCredentialsException("Email ou mot de passe incorrect");
-    } catch (AuthenticationException e) {
-      throw new RuntimeException("Erreur d'authentification");
-    }
+   
   }
 
   public String register(RegisterDTO request) {
@@ -45,7 +43,7 @@ public class AuthService {
       throw new IllegalArgumentException("Email déjà utilisé");
     }
 
-    try {
+   
       User user = new User();
       user.setEmail(request.getEmail());
       user.setName(request.getName());
@@ -53,14 +51,29 @@ public class AuthService {
       userRepository.save(user);
 
       return jwtUtil.generateToken(user);
-    } catch (Exception e) {
-      throw new RuntimeException("Erreur lors de l'enregistrement de l'utilisateur");
-    }
+    
   }
 
-  public User getCurrentUser(String email) {
-    return userRepository
-        .findByEmail(email)
+  public UserMeDTO  getCurrentUser(Authentication authentication) {
+ CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+
+
+    User user = userRepository
+        .findByEmail(customUserDetails.getEmail())
         .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
+
+    return mapToUserMeDTO(user);
   }
+
+  private UserMeDTO mapToUserMeDTO(User user) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    UserMeDTO dto = new UserMeDTO();
+    dto.setId(user.getId());
+    dto.setEmail(user.getEmail());
+    dto.setName(user.getName());
+    dto.setCreated_at(user.getCreatedAt() != null ? user.getCreatedAt().format(formatter) : null);
+    dto.setUpdated_at(user.getUpdatedAt() != null ? user.getUpdatedAt().format(formatter) : "");
+    return dto;
+}
 }

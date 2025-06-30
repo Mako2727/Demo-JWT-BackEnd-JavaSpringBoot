@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.RegisterDTO;
+import com.example.demo.dto.UserMeDTO;
 import com.example.demo.model.AuthRequest;
-import com.example.demo.model.CustomUserDetails;
-import com.example.demo.model.User;
 import com.example.demo.service.AuthService;
 import jakarta.validation.Valid;
 import java.util.Map;
@@ -34,16 +33,8 @@ public class AuthController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<Map<String, Object>> getCurrentUser(Authentication authentication) {
-    CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-    User user = authService.getCurrentUser(customUserDetails.getEmail());
-
-    return ResponseEntity.ok(
-        Map.of(
-            "id", user.getId(),
-            "email", user.getEmail(),
-            "name", user.getName(),
-            "created_at", user.getCreatedAt(),
-            "updated_at", user.getUpdatedAt() != null ? user.getUpdatedAt() : ""));
-  }
+  public ResponseEntity<UserMeDTO> getCurrentUser(Authentication authentication) {
+    UserMeDTO dto = authService.getCurrentUser(authentication);
+    return ResponseEntity.ok(dto);
+}
 }

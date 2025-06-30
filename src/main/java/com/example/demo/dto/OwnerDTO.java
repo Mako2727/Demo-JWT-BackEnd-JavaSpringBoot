@@ -1,5 +1,10 @@
 package com.example.demo.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class OwnerDTO {
   private Long id;
   private String name;
@@ -19,44 +24,4 @@ public class OwnerDTO {
   // Constructeur par défaut
   public OwnerDTO() {}
 
-  // Getters et Setters
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getCreated_at() {
-    return created_at;
-  }
-
-  public void setCreated_at(String created_at) {
-    this.created_at = created_at;
-  }
-
-  public String getUpdated_at() {
-    return updated_at;
-  }
-
-  public void setUpdated_at(String updated_at) {
-    this.updated_at = updated_at;
-  }
 }
