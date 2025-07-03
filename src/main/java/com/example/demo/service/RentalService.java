@@ -116,7 +116,6 @@ public class RentalService {
 
       surfaceInt =dto.getSurface();
       priceDouble =dto.getPrice();
-   System.out.print("surfaceInt : " +surfaceInt);
     String picturePath = savePicture(dto.getPicture());
 
    
