@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.MessageDTO;
-import com.example.demo.service.MessageService;
+import com.example.demo.service.impl.MessageServiceImpl;
+
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class MessageController {
 
-  private final MessageService messageService;
+  private final MessageServiceImpl messageService;
 
-  public MessageController(MessageService messageService) {
+  public MessageController(MessageServiceImpl messageService) {
     this.messageService = messageService;
   }
 
+  @Operation(summary = "Creation d'un message")
   @PostMapping
   public ResponseEntity<MessageDTO> createMessage(@Valid @RequestBody MessageDTO messageDTO) {
     MessageDTO created = messageService.createMessage(messageDTO);
