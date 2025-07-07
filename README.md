@@ -16,16 +16,17 @@ Ce projet est une API REST sécurisée construite avec Spring Boot, Spring Secur
 ## Tech Stack
 
 - Java 17+
-- Spring Boot
-- Spring Security
-- JWT (via `io.jsonwebtoken`)
-- Spring Data JPA + MySQL
+- Spring Boot Version 3.5.0 (gestion automatique des versions des dépendances comme Spring Security, Spring Data JPA, etc.)
+- Spring Security (version gérée par Spring Boot)
+- JWT (via `io.jsonwebtoken` version 0.11.5)
+- Spring Data JPA (version gérée par Spring Boot)  
+- MySQL Version minimale 8.0+
 - Swagger (Springdoc OpenAPI)
 - Visual Studio Code
 
 ## Endpoints
 
-| Méthode | URL                   | Accès     | Description                                  |
+| Méthode | URL                    | Accès     | Description                                  |
 |---------|------------------------|-----------|----------------------------------------------|
 | POST    | /auth/register         | Public    | Enregistre un nouvel utilisateur             |
 | POST    | /auth/login            | Public    | Authentifie et retourne un JWT               |

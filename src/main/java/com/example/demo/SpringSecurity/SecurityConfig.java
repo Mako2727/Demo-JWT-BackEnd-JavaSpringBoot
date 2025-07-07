@@ -1,7 +1,7 @@
 package com.example.demo.SpringSecurity;
 
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.CustomUserDetailsService;
+import com.example.demo.service.impl.CustomUserDetailsServiceImpl;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
@@ -25,9 +25,9 @@ public class SecurityConfig {
 
 
 
-  private final CustomUserDetailsService customUserDetailsService;
+  private final CustomUserDetailsServiceImpl customUserDetailsService;
 
-  public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+  public SecurityConfig(CustomUserDetailsServiceImpl customUserDetailsService) {
     this.customUserDetailsService = customUserDetailsService;
   }
 
@@ -73,7 +73,7 @@ public class SecurityConfig {
 
   @Bean
   public UserDetailsService userDetailsService(UserRepository userRepository) {
-    return new CustomUserDetailsService(userRepository);
+    return new CustomUserDetailsServiceImpl(userRepository);
   }
 
   @Bean
