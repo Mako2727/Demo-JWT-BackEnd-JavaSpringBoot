@@ -27,8 +27,8 @@ public class Rental {
   @Column(nullable = false, length = 1000)
   private String description;
 
-  @Column(name = "picture_path")
-  private String picturePath;
+  @Column(name = "picture")
+  private String picture;
 
   // Relation ManyToOne vers User (propriétaire)
   @ManyToOne(fetch = FetchType.LAZY)

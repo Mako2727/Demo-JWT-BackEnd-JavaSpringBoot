@@ -59,7 +59,7 @@ public class RentalServiceImpl implements RentalService {
     dto.setDescription(rental.getDescription());
 
     String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-    dto.setPicture(rental.getPicturePath() != null ? baseUrl + "/" + rental.getPicturePath() : null);
+    dto.setPicture(rental.getPicture() != null ? baseUrl + "/" + rental.getPicture() : null);
 
     dto.setOwnerId(rental.getOwner() != null ? rental.getOwner().getId() : null);
 
@@ -117,7 +117,7 @@ public class RentalServiceImpl implements RentalService {
 
       surfaceInt =dto.getSurface();
       priceDouble =dto.getPrice();
-    String picturePath = savePicture(dto.getPicture());
+    String picture = savePicture(dto.getPicture());
 
    
 
@@ -126,7 +126,7 @@ public class RentalServiceImpl implements RentalService {
     rental.setSurface(surfaceInt);
     rental.setPrice(priceDouble);
     rental.setDescription(dto.getDescription());
-    rental.setPicturePath(picturePath);
+    rental.setPicture(picture);
     rental.setOwner(owner);
 
     rentalRepository.save(rental);
@@ -169,7 +169,7 @@ String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().to
               dto.setSurface(r.getSurface());
               dto.setPrice(r.getPrice());
               dto.setDescription(r.getDescription());
-              dto.setPicture(r.getPicturePath());
+              dto.setPicture(r.getPicture());
               dto.setCreated_at(r.getCreatedAt() != null ? r.getCreatedAt().format(formatter) : null);
               dto.setUpdated_at(r.getUpdatedAt() != null ? r.getUpdatedAt().format(formatter) : null);
               dto.setOwnerId(r.getOwner() != null ? r.getOwner().getId() : null);
