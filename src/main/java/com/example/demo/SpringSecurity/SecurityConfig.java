@@ -6,6 +6,8 @@ import com.example.demo.service.impl.CustomUserDetailsServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -30,6 +32,13 @@ public class SecurityConfig {
   public SecurityConfig(CustomUserDetailsServiceImpl customUserDetailsService) {
     this.customUserDetailsService = customUserDetailsService;
   }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+        configurer.setLocation(new FileSystemResource(".env"));
+        return configurer;
+    }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, jwtRequestFilter jwtRequestFilter)
